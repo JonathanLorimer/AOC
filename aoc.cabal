@@ -7,13 +7,18 @@ maintainer:          jonathan_lorimer@mac.com
 build-type:          Simple
 
 library
-  exposed-modules:  Streams2021.Day1
+  exposed-modules:
+    Streams2021.Day1
+    Streams2021.Day2
   ghc-options:      -Wall
   build-depends:    base >=4.10 && <5
-                  , streamly
                   , containers
+                  , megaparsec
+                  , streamly
+                  , text
   hs-source-dirs:   src
   default-extensions: RecordWildCards
+                    , NamedFieldPuns
                     , LambdaCase
                     , BlockArguments
                     , ScopedTypeVariables
