@@ -48,7 +48,9 @@ data Window =
 orderWindows :: Monad m => Int -> S.SerialT m Int -> S.SerialT m (Maybe Ordering)
 orderWindows head = S.map ordering . S.scanl' scanFunction start
   where
+    start :: Window
     start = Window { initialValue = Sum head, incompleteWindow = Nothing, completeWindow = Nothing, ordering = Nothing}
+
     scanFunction :: Window -> Int -> Window
     scanFunction Window {..} n =
       let initial = Sum n
