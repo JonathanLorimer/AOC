@@ -3,42 +3,39 @@ module Streams2021.Day1 where
 import qualified Streamly.FileSystem.Handle as FH
 import qualified Streamly.Prelude as S
 import qualified Streamly.Data.Fold as F
-import System.IO (openFile, IOMode (ReadMode), Handle)
-import Control.Monad.IO.Class (MonadIO)
+import System.IO (openFile, IOMode (ReadMode))
 import qualified Streamly.Internal.Unicode.Stream as U
 import Prelude hiding (head)
 import Data.Monoid
 import Control.Applicative
+import Data.Bifunctor
 
-solve1 :: IO ()
-solve1 = do
+solve :: IO ()
+solve = do
   input <- openFile "src/Streams2021/Inputs/day1.txt" ReadMode
-  print =<< foldInput orderPrev input
 
-solve2 :: IO ()
-solve2 = do
-  input <- openFile "src/Streams2021/Inputs/day1.txt" ReadMode
-  print =<< foldInput orderWindows input
+  mHeadAndStream <- S.uncons . S.map (read @Int) . U.lines F.toList . U.decodeUtf8Arrays . S.unfold FH.readChunks $ input
 
-foldInput ::
-  MonadIO m =>
-  (Int -> S.SerialT m Int -> S.SerialT m (Maybe Ordering)) ->
-  Handle ->
-  m (Sum Int)
-foldInput mkOrderings h = do
-  mHeadAndTail <- S.uncons . S.map (read @Int) . U.lines F.toList . U.decodeUtf8Arrays . S.unfold FH.readChunks $ h
-  case mHeadAndTail of
-    Nothing -> pure mempty
-    Just (head, stream) ->
-            S.fold (F.catMaybes countIncreases)
-          . mkOrderings head
-          $ stream
+  case mHeadAndStream of
+    Nothing -> print "No input from src/Streams/2021/Inputs/day1.txt"
+    Just (head, stream) -> do
+
+      let fold = F.catMaybes countIncreases
+
+      (sol1, sol2) <- fmap (bimap getSum getSum)
+                    $ S.fold (F.unzip fold fold)
+                    $ S.zipWith (,) (orderPrev head stream) (orderWindows head stream)
+
+      putStrLn $ "Solution 1: " <> show sol1
+      putStrLn $ "Solution 2: " <> show sol2
+
 
 countIncreases :: Monad m => F.Fold m Ordering (Sum Int)
 countIncreases = F.foldMap \case GT -> Sum 1; _ -> mempty
 
 orderPrev :: Monad m => Int -> S.SerialT m Int -> S.SerialT m (Maybe Ordering)
 orderPrev head = S.map snd . S.scanl' (\(prev, _) curr -> (curr, Just $ curr `compare` prev)) (head, Nothing)
+
 
 data Window =
   Window
