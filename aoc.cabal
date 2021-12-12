@@ -1,0 +1,23 @@
+cabal-version:       >=1.10
+
+name:                aoc
+version:             0.1.0.0
+author:              Jonathan Lorimer
+maintainer:          jonathan_lorimer@mac.com
+build-type:          Simple
+
+library
+  exposed-modules:  Streams2021.Day1
+  ghc-options:      -Wall
+  build-depends:    base >=4.10 && <5
+                  , streamly
+                  , containers
+  hs-source-dirs:   src
+  default-extensions: RecordWildCards
+                    , LambdaCase
+                    , BlockArguments
+                    , ScopedTypeVariables
+                    , GADTs
+                    , LambdaCase
+                    , DerivingStrategies
+                    , TypeApplications
