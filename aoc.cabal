@@ -10,12 +10,14 @@ library
   exposed-modules:
     Streams2021.Day1
     Streams2021.Day2
+    Streams2021.Day3
   ghc-options:      -Wall
   build-depends:    base >=4.10 && <5
                   , containers
                   , megaparsec
                   , streamly
                   , text
+                  , pretty-simple
   hs-source-dirs:   src
   default-extensions: RecordWildCards
                     , NamedFieldPuns
